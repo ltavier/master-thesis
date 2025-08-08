@@ -1,3 +1,10 @@
+"""
+
+In this file, we create the lookback windows for the asset characteristics
+
+"""
+
+
 import os
 import glob
 import re
