@@ -260,22 +260,6 @@ class SimpleIPCA:
 
             for i, d in enumerate(train_dates):
                 hist_facs[d] = Factor[:, i]
-
-            """
-            for d in val_dates:
-                i = Dates.index(d)
-                Zd = self.Z.loc[d].values
-                if Zd.ndim == 1:
-                    Zd = Zd.reshape(-1, 1)
-                if self.L > Zd.shape[1]:
-                    Zd = np.hstack([Zd, np.ones((Zd.shape[0], 1))])
-                Betat = Zd.dot(Gamma)
-                fac_d = _mldivide(
-                    Gamma.T.dot(self._W[:, :, i]).dot(Gamma),
-                    Gamma.T.dot(self._X[:, i])
-                )
-                hist_facs[d] = fac_d
-            """
                 
             w, w_shrunk, mu_F = self.compute_tangency_weights(hist_facs,  target_vol=(12 ** 0.5) * 0.1)
             w_eq = np.ones_like(w) / w.size
