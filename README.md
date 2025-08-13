@@ -28,28 +28,28 @@ Both models construct tradable factors and apply a **subsampled factor regulariz
 
 ```
 benchmark/
-│ CA.py # Conditional Autoencoder baseline
-│ IPCA.py # Instrumented PCA baseline
+│   CA.py                     # Conditional Autoencoder baseline
+│   IPCA.py                   # Instrumented PCA baseline
 
 chronosbolt-TLFM/
-│ Beta.py # Factor construction & beta estimation
-│ CB_CA.py # ChronosBolt-based Conditional Autoencoder
-│ data.py # Data loader for ChronosBolt model
+│   Beta.py                   # Factor construction & beta estimation
+│   CB_CA.py                  # ChronosBolt-based Conditional Autoencoder
+│   data.py                   # Data loader for ChronosBolt model
 │
-└── chronos-forecasting/ # ChronosBolt forecasting utilities
+└── chronos-forecasting/      # ChronosBolt forecasting utilities
 
 data/
-│ data_sorting.py # Sorting and grouping firm characteristics
-│ features.json # Feature metadata
-│ list_of_features.pdf # List & description of characteristics
-│ maindata.py # Main data preparation
-│ managed-portfolios.py # Portfolio construction
-│ preprocessing.py # Data preprocessing utilities
+│   data_sorting.py           # Sorting and grouping firm characteristics
+│   features.json             # Feature metadata
+│   list_of_features.pdf      # List & description of characteristics
+│   maindata.py               # Main data preparation
+│   managed-portfolios.py     # Portfolio construction
+│   preprocessing.py          # Data preprocessing utilities
 
 iTransformer-TLFM/
-│ data.py # Data loader for iTransformer model
-│ iBeta.py # Factor construction for iTransformer
-│ iCA.py # iTransformer-based Conditional Autoencoder
+│   data.py                   # Data loader for iTransformer model
+│   iBeta.py                  # Factor construction for iTransformer
+│   iCA.py                    # iTransformer-based Conditional Autoencoder
 │
-└── iTransformer/ # iTransformer utilities
+└── iTransformer/             # iTransformer utilities
 ```
