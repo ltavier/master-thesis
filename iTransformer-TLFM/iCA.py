@@ -37,9 +37,6 @@ class EarlyStopping:
 
 class iCA(nn.Module):
     def __init__(self,
-                 #data_parquet: list,
-                 #rz_files: list,
-                 #x2_parquet: str,
                  df_full, dfs, X2_df,
                  features_json: str,
                  beta_net: iBeta,       # <-- Accept an encoder instance here
@@ -58,7 +55,6 @@ class iCA(nn.Module):
         
         super().__init__()
 
-        #print("→ [1/6] CB_AE init: setting device & batch_size", flush=True)
         self.device = device
         self.batch_size = batch_size
         self.lambda_quantiles = lambda_quantiles
@@ -71,8 +67,6 @@ class iCA(nn.Module):
         self.factor_months_reg=factor_months_reg
 
         # ─── Datasets & loaders ──────────────────────────────────────────────
-        #print("→ [2/6] Loading ParquetWindowDataset…", flush=True)
-        #df_full = pd.concat([pd.read_parquet(p) for p in data_parquet], ignore_index=True)
         self.data_ds = ParquetDataset(
             dataframe = df_full,
             features_json=features_json,
@@ -85,7 +79,6 @@ class iCA(nn.Module):
             shuffle=True
         )
 
-        #print("→ [3/6] Loading ParquetMonthDataset…", flush=True)
         self.month_ds = ParquetDataset(
             dataframe = df_full,
             features_json=features_json,
@@ -99,12 +92,8 @@ class iCA(nn.Module):
         self.num_factors = num_factors
 
         # ─── Cross‐sectional RZ data & X2_t ────────────────────────
-        #print("→ [4/6] Reading RZ files…", flush=True)
-        #dfs = [pd.read_parquet(p) for p in rz_files]
         self.RZ = pd.concat(dfs)
 
-        #print("→ [5/6] Loading X2 parquet…", flush=True)
-        #X2_df = pd.read_parquet(x2_parquet)
         X2_df = X2_df.sort_index()
         # turn the Timestamp index into 'YYYY-MM-DD' strings
         X2_df.index = X2_df.index.strftime('%Y-%m-%d')
@@ -112,11 +101,9 @@ class iCA(nn.Module):
             month: torch.from_numpy(X2_df.loc[month].values.astype(np.float32)).to(self.device)
             for month in X2_df.index
         }
-        #print("Loaded and sorted X2 from:", x2_parquet)
 
 
         # ─── Model components ────────────────────────────────────────────────
-        #print("→ [6/6] Building model components & optimizer…", flush=True)
 
         # Use the externally‐passed “beta_net”
         self.beta_net = beta_net.to(self.device)
@@ -128,9 +115,6 @@ class iCA(nn.Module):
             self.parameters(), lr=lr, weight_decay=weight_decay
         )
 
-        #print("   ✓ CB_CA ready", flush=True)
-
-        
 
 
 
@@ -256,7 +240,6 @@ class iCA(nn.Module):
                     break
                 best_epoch = ep
 
-            #print(f"[Epoch {ep:02d}] Train MSE={train_loss:.5f}  Val MSE={val_loss:.5f}", flush=True)
 
         if early_stopping is not None:
             early_stopping.restore(self)
