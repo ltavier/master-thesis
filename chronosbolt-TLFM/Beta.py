@@ -21,9 +21,6 @@ class Beta(nn.Module):
         self.bolt_model = chronos_pipeline.model
         for p in self.bolt_model.parameters():
             p.requires_grad = False
-        # unfreeze final block
-        #for p in self.bolt_model.encoder.block[-1].parameters():
-        #    p.requires_grad = True
 
         self.num_characs      = num_characs
         self.pca_dim          = pca_dim
@@ -58,10 +55,6 @@ class Beta(nn.Module):
                     nn.init.kaiming_uniform_(m.weight, a=0, mode='fan_in', nonlinearity='relu')
                     if m.bias is not None:
                         nn.init.zeros_(m.bias)
-            #    elif isinstance(m, nn.BatchNorm1d):
-            #        # scale=1, shift=0
-            #       nn.init.constant_(m.weight, 1.0)
-             #       nn.init.constant_(m.bias,   0.0)
 
         else:
             self.encoder_pca = None
@@ -72,7 +65,7 @@ class Beta(nn.Module):
         # ── 2) Query token & cross-attention ─────────────────────
         
 
-        # 1) Decide your reduced dimension
+        #  Decide your reduced dimension
         self.num_heads       = num_heads
         self.head_dim        = head_dim
         self.reduced_d_model = num_heads * head_dim
@@ -81,17 +74,17 @@ class Beta(nn.Module):
         
         self.query_token = nn.Parameter(torch.randn(1, 1, self.reduced_d_model))
 
-        # 2) A small linear to project down
+        # A small linear to project down
         self.attn_in_proj = nn.Linear(self.d_model, self.reduced_d_model)
 
-        # 3) Multi-head attention on the reduced space
+        # Multi-head attention on the reduced space
         self.attn1 = nn.MultiheadAttention(
             embed_dim=self.reduced_d_model,
             num_heads=self.num_heads,
             batch_first=True
         )
 
-
+        
         # ── 3) Final factor projection ───────────────────────────
         self.final_linear = nn.Linear(self.reduced_d_model, num_factors, bias=True)
         nn.init.xavier_uniform_(self.final_linear.weight)
