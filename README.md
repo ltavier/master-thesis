@@ -50,4 +50,6 @@ iTransformer-TLFM/
 │ data.py # Data loader for iTransformer model
 │ iBeta.py # Factor construction for iTransformer
 │ iCA.py # iTransformer-based Conditional Autoencoder
+│
+└── iTransformer/ # iTransformer utilities
 ```
