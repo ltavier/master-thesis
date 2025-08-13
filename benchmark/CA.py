@@ -308,9 +308,6 @@ class CA(nn.Module):
         if early_stopping:
             early_stopping.restore(self)
 
-        # Apply PCA_positivemean rotation to identify factors
-        #self.apply_rotation()
-
 
 
     def fit_OOS(self,
