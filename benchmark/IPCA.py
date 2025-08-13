@@ -112,7 +112,7 @@ class SimpleIPCA:
     def fit(
         self,
         K=1,
-        minTol=1e-1,
+        minTol=0.5,
         maxIters=500,
         normalization_choice='PCA_positivemean',
         normalization_specs=None
