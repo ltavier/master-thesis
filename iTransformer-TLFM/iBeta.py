@@ -8,12 +8,9 @@ from layers.Embed import DataEmbedding_inverted
 
 class iBeta(nn.Module):
     """
-    Inverted Transformer that maps a 94-variate, length-60 time series + optional date covariates
-    to 5 common factors.
 
     Input:  
         x_enc:      [B, seq_len=60, N=94]
-        x_mark_enc: [B, seq_len=60, d_time]   (date/macroeconomic covariates; can be None)
     Output:
         factors: [B, num_factors=5]
     """
@@ -70,24 +67,6 @@ class iBeta(nn.Module):
         self.output_attention = configs.output_attention
         self.cls_token = nn.Parameter(torch.randn(1, 1, configs.d_model))
 
-        """
-        # A single learnable query to attend over all tokens
-        # Shape: (1, 1, d_model). Each batch expands this to (B, 1, d_model). :contentReference[oaicite:11]{index=11}
-        self.query_token = nn.Parameter(torch.randn(1, 1, configs.d_model))
-
-        # Multi-head attention to fuse embeddings: embed_dim = d_model, num_heads = num_heads
-        self.attention = nn.MultiheadAttention(
-            embed_dim=configs.d_model,
-            num_heads=num_heads,
-            batch_first=True
-        )
-
-        # Final projection: d_model → num_factors
-        self.fc = nn.Linear(configs.d_model, self.num_factors)
-        nn.init.xavier_uniform_(self.fc.weight)  # Xavier init for the final linear :contentReference[oaicite:12]{index=12}
-        if self.fc.bias is not None:
-            nn.init.zeros_(self.fc.bias)
-        """
         
     def forward(self, x_enc, x_mark_enc=None):
         """
@@ -121,27 +100,6 @@ class iBeta(nn.Module):
         factors = self.final_linear(cls_embedding)          # [B, num_factors]
         return factors  # if you want the attention weights
 
-        """
-        # 3) Inverted Transformer encoder:
-        #    enc_out: [B, 94, d_model] → remains [B, 94, d_model]
-        enc_out, attns = self.encoder(enc_out, attn_mask=None)
-
-        # 4) Pool across the token dimension (dim=1) → [B, d_model]:
-        #    AdaptiveAvgPool1d expects shape [B, C, L], so transpose first:
-        pooled = self.pool(enc_out.transpose(1, 2)).squeeze(-1)  # [B, d_model]
-
-        # 5) Project pooled embedding → 5 common factors:
-        #    factors: [B, 5]
-        factors = self.final_linear(pooled)
-
-        # 6) We skip any “de-normalization” step, since we are not forecasting.
-
-        if self.output_attention:
-            return factors, attns
-        else:
-            return factors
-        """
-
 
 # 1) Define the same Configs class as before. No changes needed here.
 class Configs:
@@ -149,7 +107,7 @@ class Configs:
     Configuration container for the iBeta / iCA models.
 
     Args:
-        seq_len (int): length of each input time series (default: 60)
+        seq_len (int): length of each input time series (default: 45)
         N (int): number of variables/tokens (default: 94)
         num_factors (int): number of common factors to output (default: 5)
         d_model (int): transformer embedding dimension
